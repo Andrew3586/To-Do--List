@@ -1,17 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 const ToDoInput = () => {
   const [aToDoInput, setaToDoInput] = useState("");
   const [category, setCategory] = useState("");
+  const [todolist, setTodolist] = useState([]);
 
+  useEffect(() => {
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      };
+      fetch("http://localhost:9292/todos",requestOptions)
+      .then(response => response.json())
+      .then(data =>  setTodolist(data.todos));
+      },[])
   const aToDoInputHandler = (event) => {
     console.log(event.target.value);
     setaToDoInput(event.target.value);
   };
+  const removeElement = (itemId) => {
+    console.log(itemId)
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        },
 
+        };
+    try {
+      fetch("http://localhost:9292/todos/"+ itemId,requestOptions)
+        .then((r) => r.json())
+        .then((data) => console.log(data));
+      console.log(aToDoInput);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const listingtodos =
+  todolist ? todolist.map((item) =>
+<tr>
+  <td>
+    <label>
+    <input type="checkbox" />
+    <span>{item.name}</span>
+  </label>
+  </td>
+  <td>
+  <button>
+      <FiEdit3 />
+    </button>
+    </td>
+    <td>
+    <button onClick={() => removeElement(item.id)}>
+      <MdOutlineDeleteOutline />
+    </button>
+    </td>
+  </tr>
+) : ""
   const formSubmitHandler = (event) => {
     event.preventDefault();
+    console.log(todolist)
+    console.log(listingtodos)
     const data = { task: aToDoInput, category: category };
     const requestOptions = {
       method: 'POST',
@@ -29,6 +81,7 @@ const ToDoInput = () => {
       console.log(error);
     }
   };
+
   return (
     <div className="bg-sky-500/[.40]  flex flex-col h-screen items-center justify-center gap-10">
       <h1 className="text-4xl font-bold m-4">Add To Do Task</h1>
@@ -63,21 +116,13 @@ const ToDoInput = () => {
           value="Add Task"
         />
       </form>
-      <div className="flex w-full max-w-sm justify-between border-3 p-2 rounded-md border-2 border-[#000080]">
-        <label className="flex gap-2">
-          <input type="checkbox" />
-          <span>My Value</span>
-        </label>
-        <div className="flex gap-2">
-          <button>
-            <FiEdit3 />
-          </button>
-          <button>
-            <MdOutlineDeleteOutline />
-          </button>
-        </div>
+
+        <table>
+      {listingtodos}
+      </table>
       </div>
-    </div>
+
+
   );
 };
 
