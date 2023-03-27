@@ -16,7 +16,7 @@ code {
     monospace;
 }
 
-table, th, td {
+/* table, th, td {
   border-bottom: 1px solid black;
   border-top: 1px solid black;
   border-collapse: collapse;
@@ -24,7 +24,7 @@ table, th, td {
 
   table {
     width: 40%
-  }
+  } */
 
 
 
