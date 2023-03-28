@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
-const ToDoInput = () => {
+
+const ToDoEdit = () => {
   const [aToDoInput, setaToDoInput] = useState("");
   const [category, setCategory] = useState("");
   const [todolist, setTodolist] = useState([]);
@@ -156,4 +157,4 @@ const ToDoInput = () => {
   );
 };
 
-export default ToDoInput;
+export default ToDoEdit;
