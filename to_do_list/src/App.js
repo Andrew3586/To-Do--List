@@ -13,7 +13,7 @@ function App() {
       <Route exact path="/" element={<ToDoInput />} />
           </Routes>
           <Routes>
-      <Route path="/todoedit" element={<ToDoEdit />} />
+      <Route path="/todoedit/:id" element={<ToDoEdit />} />
       </Routes>
   </BrowserRouter>
 </div>

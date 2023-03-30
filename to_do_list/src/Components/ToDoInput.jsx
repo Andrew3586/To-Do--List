@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
+import { Link } from "react-router-dom";
 const ToDoInput = () => {
   const [aToDoInput, setaToDoInput] = useState("");
   const [category, setCategory] = useState("");
@@ -82,7 +83,8 @@ const ToDoInput = () => {
           </td>
           <td className="flex justify-end gap-6">
             <button>
-              <FiEdit3 />
+            <Link to="todoedit/:id" ><FiEdit3 />
+            </Link>
             </button>
             <button onClick={() => removeElement(item.id)} className="mr-2">
               <MdOutlineDeleteOutline />
@@ -145,7 +147,7 @@ const ToDoInput = () => {
           className="flex-shrink-0 bg-[#243e8e] hover:bg-[#323754] border-[#243e8e] hover:border-[#323754] text-sm border-4 text-white py-1 px-2 rounded duration-300"
           type="submit"
           id="submit"
-          value="Add Task"
+          value="Add Category and Task"
         />
       </form>
 
