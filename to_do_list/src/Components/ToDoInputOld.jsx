@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import { FiEdit3 } from "react-icons/fi";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import BASE_URL from "../Constant/Constant";
-
 const ToDoInput = () => {
   const [aToDoInput, setaToDoInput] = useState("");
   const [category, setCategory] = useState("");
@@ -99,19 +96,22 @@ const ToDoInput = () => {
       ))
     : "";
 
-  const formSubmitHandler = async (event) => {
+  const formSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log(todolist);
+    console.log(listingtodos);
+    const data = { task: aToDoInput, category: category };
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: aToDoInput, category_name: category }),
+    };
     try {
-      event.preventDefault();
-      // const data = { task: aToDoInput, category: category };
-
-      const saveCategory = await axios.post(`${BASE_URL}categories/`, {
-        category_name: category,
-      });
-
-      if(saveCategory.status==200){
-
-      }
-
+      fetch("http://localhost:9292/todos", requestOptions)
+        .then((r) => r.json())
+        .then((data) => console.log(data));
       console.log(aToDoInput);
     } catch (error) {
       console.log(error);
