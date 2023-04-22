@@ -1,24 +1,22 @@
-import { BrowserRouter, Routes, Route, } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ToDoInput from "./Components/ToDoInput";
 import ToDoEdit from "./Components/ToDoEdit";
 
 function App() {
-
   return (
-
-  <div>
-  <BrowserRouter>
-  <Routes>
-      <Route exact path="/" element={<ToDoInput />} />
-          </Routes>
-          <Routes>
-      <Route path="/todoedit/:id" element={<ToDoEdit />} />
-      </Routes>
-  </BrowserRouter>
-</div>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<ToDoInput/>} />
+        </Routes>
+        <Routes>
+          <Route path="/todoedit/:id" element={<ToDoEdit />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
-  }
+}
 // function App() {
 //   return (
 //     <BrowserRouter>
@@ -43,7 +41,5 @@ export default App;
 //     </div>
 //   );
 // }
-
-
 
 // export default App;

@@ -1,118 +1,54 @@
-import React, { useState, useEffect } from "react";
-import { FiEdit3 } from "react-icons/fi";
-import { MdOutlineDeleteOutline } from "react-icons/md";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import BASE_URL from "../Constant/Constant";
+import { nanoid } from "nanoid";
+import ToDoList from "./ToDoList";
+import DataContext from "../Context/dataContext";
 
 const ToDoInput = () => {
-  const [aToDoInput, setaToDoInput] = useState("");
+  const { categoryData, fetchCategories } = useContext(DataContext);
+
   const [category, setCategory] = useState("");
-  const [todolist, setTodoList] = useState([]);
-
-  useEffect(() => {
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    fetch("http://localhost:9292/todos", requestOptions)
-      .then((response) => response.json())
-      .then((data) => setTodoList(data.todos));
-  }, []);
-  const aToDoInputHandler = (event) => {
-    setaToDoInput(event.target.value);
-  };
-  const checktodotHandler = (itemId, marked) => {
-    // marktodo[itemId]=!marked
-    // setMarktodo(marktodo);
-    // console.log(marktodo);
-    let tempTodo = [];
-    todolist.map((item) => {
-      if (itemId === item.id) {
-        item.marked = !marked;
-      }
-      tempTodo.push(item);
-    });
-    console.log(tempTodo);
-    setTodoList(tempTodo);
-    console.log(todolist);
-    const requestOptions = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ marked: !marked }),
-    };
-    try {
-      fetch("http://localhost:9292/todos/" + itemId, requestOptions)
-        .then((r) => r.json())
-        .then((data) => console.log(data));
-      console.log(aToDoInput);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const removeElement = (itemId) => {
-    console.log(itemId);
-    const requestOptions = {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      fetch("http://localhost:9292/todos/" + itemId, requestOptions)
-        .then((r) => r.json())
-        .then((data) => window.location.reload(false));
-      console.log(aToDoInput);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const listingtodos = todolist
-    ? todolist.map((item) => (
-        <tr className="border-b-[#323754] border-b-2">
-          <td>
-            <label>
-              <input
-                type="checkbox"
-                id={item.id}
-                onChange={() => checktodotHandler(item.id, item.marked)}
-                checked={item.marked}
-              />
-              <span>{item.name}</span>
-            </label>
-          </td>
-          <td className="flex justify-end gap-6">
-            <button>
-              <Link to={`/todoedit/${item.id}`}>
-                <FiEdit3 />
-              </Link>
-            </button>
-            <button onClick={() => removeElement(item.id)} className="mr-2">
-              <MdOutlineDeleteOutline />
-            </button>
-          </td>
-        </tr>
-      ))
-    : "";
-
-  const formSubmitHandler = async (event) => {
+  const categoryHandler = async (event) => {
     try {
       event.preventDefault();
-      // const data = { task: aToDoInput, category: category };
-
-      const saveCategory = await axios.post(`${BASE_URL}categories/`, {
+      const saveCategory = await axios.post(`${BASE_URL}categories`, {
         category_name: category,
       });
-
-      if(saveCategory.status==200){
-
+      if (saveCategory.status === 200) {
+        alert(saveCategory.data.message);
+        setCategory("");
+        fetchCategories();
       }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-      console.log(aToDoInput);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const [selectedCatValue, setSelectedCatValue] = useState("default");
+  const [taskAdded, setTaskAdded] = useState("");
+
+  const taskHandler = async (e) => {
+    try {
+      e.preventDefault();
+      if (selectedCatValue === "default") {
+        return alert("Category is required!");
+      }
+      console.log(selectedCatValue, taskAdded);
+      const res = await axios.post(
+        `${BASE_URL}categories/${selectedCatValue}/todos`,
+        { name: taskAdded }
+      );
+      if (res.status === 200) {
+        alert(res.data.message);
+        setTaskAdded("");
+        setSelectedCatValue("default");
+        fetchCategories();
+      }
     } catch (error) {
       console.log(error);
     }
@@ -120,10 +56,10 @@ const ToDoInput = () => {
 
   return (
     <div className="bg-sky-500/[.40]  flex flex-col h-screen items-center justify-center gap-10">
-      <h1 className="text-4xl font-bold m-4">Add To Do Task</h1>
+      <h1 className="text-4xl font-bold m-4">Add A New Category</h1>
       <form
         className="flex flex-col gap-6 w-full max-w-sm"
-        onSubmit={formSubmitHandler}
+        onSubmit={categoryHandler}
       >
         <input
           type="text"
@@ -135,26 +71,75 @@ const ToDoInput = () => {
           required
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           value={category}
-          placeholder="Enter a category"
+          placeholder="Enter a new category"
         />
+        <input
+          className="flex-shrink-0 bg-[#243e8e] hover:bg-[#323754] border-[#243e8e] hover:border-[#323754] text-sm border-4 text-white py-1 px-2 rounded duration-300"
+          type="submit"
+          id="submit"
+          value="Add New Category"
+        />
+      </form>
+
+      <h1 className="text-4xl font-bold m-4">Add A New Task</h1>
+      <form
+        className="flex flex-col gap-6 w-full max-w-sm"
+        onSubmit={taskHandler}
+      >
+        <select
+          id="category"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          onChange={(e) => {
+            console.log(e.target.value);
+            setSelectedCatValue(e.target.value);
+          }}
+          required
+          value={selectedCatValue}
+        >
+          {categoryData.length > 0 ? (
+            <>
+              <option disabled={true} value={"default"}>
+                Select A Category
+              </option>
+              {categoryData.map((el) => {
+                return (
+                  <option value={el.id} key={nanoid()}>
+                    {el.name}
+                  </option>
+                );
+              })}
+            </>
+          ) : (
+            <option value="category" selected>
+              Fetching Categories
+            </option>
+          )}
+        </select>
+
         <input
           type="text"
           required
-          placeholder="Task To Be Done"
-          onChange={aToDoInputHandler}
-          value={aToDoInput}
+          placeholder="Enter a new task to be done"
+          onChange={(e) => {
+            setTaskAdded(e.target.value);
+          }}
+          value={taskAdded}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         />
         <input
           className="flex-shrink-0 bg-[#243e8e] hover:bg-[#323754] border-[#243e8e] hover:border-[#323754] text-sm border-4 text-white py-1 px-2 rounded duration-300"
           type="submit"
           id="submit"
-          value="Add Category and Task"
+          value="Add New Task"
         />
       </form>
 
       <div class="relative overflow-x-auto w-full max-w-sm p-1 border-2 border-[#000080] rounded-lg">
-        <table className="w-full max-w-sm ">{listingtodos}</table>
+        {categoryData
+          ? categoryData.map((item) => {
+              return <ToDoList data={item} />;
+            })
+          : null}
       </div>
     </div>
   );

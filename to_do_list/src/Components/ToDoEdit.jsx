@@ -107,7 +107,7 @@ const ToDoEdit = () => {
 
         <input
           type="text"
-          placeholder="Delete Category"
+          placeholder="Enter Category You Want To Delete"
           onChange={aToDoEditHandler}
           value={aToDoEdit}
           required
