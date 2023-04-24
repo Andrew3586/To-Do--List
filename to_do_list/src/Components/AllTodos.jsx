@@ -66,6 +66,22 @@ const AllTodos = ({ id }) => {
 
   const [checked, setChecked] = useState(false);
 
+  const completeTodoHandler = async (e, id, categoryId) => {
+    try {
+      e.preventDefault();
+      const { status, data } = await axios.put(
+        `${BASE_URL}categories/${categoryId}/todos/${id}/edit`,
+        { marked: checked }
+      );
+      if (status === 200) {
+        alert(data.message);
+        return fetchOneCategoryAndTodo(id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <h1>Task:</h1>
@@ -75,21 +91,7 @@ const AllTodos = ({ id }) => {
               return (
                 <div className="flex justify-between">
                   <div>
-                    {taskEdit.id === null ? (
-                      <>
-                        <input
-                          type="checkbox"
-                          onClick={(e) => {
-                            setChecked(!checked);
-                          }}
-                        />
-                        <span
-                          className={checked === true ? "line-through" : "none"}
-                        >
-                          {item.name}
-                        </span>
-                      </>
-                    ) : (
+                    {taskEdit.id === item.id ? (
                       <input
                         type="text"
                         onChange={(e) => {
@@ -99,10 +101,35 @@ const AllTodos = ({ id }) => {
                         }}
                         value={taskEdit.todoName}
                       />
+                    ) : (
+                      <>
+                        <input
+                          type="checkbox"
+                          onClick={(e) => {
+                            setChecked(!checked);
+                            completeTodoHandler(e, item.id, item.categoryId);
+                          }}
+                        />
+                        <span
+                          className={
+                            item.marked === true ? "line-through" : "none"
+                          }
+                        >
+                          {item.name}
+                        </span>
+                      </>
                     )}
                   </div>
                   <div>
-                    {taskEdit.id === null ? (
+                    {taskEdit.id === item.id ? (
+                      <button
+                        onClick={(e) => {
+                          updateTodoHandler(e, id);
+                        }}
+                      >
+                        Update Task
+                      </button>
+                    ) : (
                       <button
                         onClick={() => {
                           setTaskEdit((prev) => {
@@ -111,14 +138,6 @@ const AllTodos = ({ id }) => {
                         }}
                       >
                         <FiEdit3 />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={(e) => {
-                          updateTodoHandler(e, id);
-                        }}
-                      >
-                        Update Task
                       </button>
                     )}
                     <button>
