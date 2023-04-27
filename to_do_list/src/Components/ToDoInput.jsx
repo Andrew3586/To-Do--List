@@ -38,7 +38,6 @@ const ToDoInput = () => {
       if (selectedCatValue === "default") {
         return alert("Category is required!");
       }
-      console.log(selectedCatValue, taskAdded);
       const res = await axios.post(
         `${BASE_URL}categories/${selectedCatValue}/todos`,
         { name: taskAdded }

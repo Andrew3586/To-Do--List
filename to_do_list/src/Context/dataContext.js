@@ -12,7 +12,6 @@ export const DataProvider = ({ children }) => {
     try {
       const { status, data } = await axios.get(`${BASE_URL}todos`);
       if (status === 200) {
-
         setTodoList(data.todos);
       }
     } catch (error) {
@@ -23,7 +22,6 @@ export const DataProvider = ({ children }) => {
   const fetchCategories = async () => {
     try {
       const res = await axios.get(`${BASE_URL}categories`);
-
       if (res.status === 200) {
         return setCategoryData(res.data.categories);
       }

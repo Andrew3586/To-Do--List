@@ -26,7 +26,6 @@ const AllTodos = ({ id }) => {
   const deleteTodoHandler = async (e, todoId, categoryId) => {
     try {
       e.preventDefault();
-      console.log(todoId, categoryId);
       const { status, data } = await axios.delete(
         `${BASE_URL}categories/${categoryId}/todos/${todoId}/delete`
       );
@@ -64,17 +63,14 @@ const AllTodos = ({ id }) => {
     }
   };
 
-  const [checked, setChecked] = useState(false);
-
-  const completeTodoHandler = async (e, id, categoryId) => {
+  const completeTodoHandler = async (e, itemId, categoryId) => {
     try {
       e.preventDefault();
       const { status, data } = await axios.put(
-        `${BASE_URL}categories/${categoryId}/todos/${id}/edit`,
-        { marked: checked }
+        `${BASE_URL}categories/${categoryId}/todos/${itemId}/edit`,
+        { marked: e.target.checked }
       );
       if (status === 200) {
-        alert(data.message);
         return fetchOneCategoryAndTodo(id);
       }
     } catch (error) {
@@ -105,8 +101,8 @@ const AllTodos = ({ id }) => {
                       <>
                         <input
                           type="checkbox"
-                          onClick={(e) => {
-                            setChecked(!checked);
+                          checked={item.marked}
+                          onChange={(e) => {
                             completeTodoHandler(e, item.id, item.categoryId);
                           }}
                         />

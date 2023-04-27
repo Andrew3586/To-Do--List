@@ -34,7 +34,6 @@ const ToDoList = ({ data }) => {
   const updateCatHandler = async (e) => {
     try {
       e.preventDefault();
-      console.log(catEdit);
       const { status, data } = await axios.put(
         `${BASE_URL}categories/${catEdit.id}/edit`,
         { category_name: catEdit.catName }
@@ -120,7 +119,8 @@ const ToDoList = ({ data }) => {
                 {/*body*/}
                 <div className="relative p-6 flex-auto">
                   <p className="my-4 text-slate-500 text-lg leading-relaxed">
-                    After deleting a category all your tasks will be deleted click cancel to go back click delete to proceed.
+                    After deleting a category all your tasks will be deleted
+                    click cancel to go back click delete to proceed.
                   </p>
                 </div>
                 {/*footer*/}
